@@ -1,17 +1,52 @@
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import javax.swing.text.StyledEditorKit.BoldAction;
 
 public abstract class Animal{
+
+	public Animal(int numero, String nome, int diaNascimento, int mesNascimento, int anoNascimento, int genero,
+			int valorDeCompra, int valorDeVenda) {
+		super();
+		this.numero = numero;
+		this.nome = nome;
+		this.diaNascimento = diaNascimento;
+		this.mesNascimento = mesNascimento;
+		this.anoNascimento = anoNascimento;
+		this.genero = genero;
+		this.valorDeCompra = valorDeCompra;
+		this.valorDeVenda = valorDeVenda;
+	}
+
+	private int numero;
+	private String nome;
+	private int diaNascimento;
+	private int mesNascimento;
+	private int anoNascimento;
+	private int genero;
+	private int valorDeCompra;
+	private int valorDeVenda;
+	private long dataNascimento;
+	private int adultAge;
+
+	private long dataVacinacao;
+	private int fazenda_id;
+	private boolean isVivo = true;
+	private boolean isVacinado = false;
+	private boolean isVendido = false;
+
 	public int getNumero() {
+
 		return numero;
 	}
 
 	public void setNumero(int numero) {
 		this.numero = numero;
 	}
-
+	
 	public int getDiaNascimento() {
 		return diaNascimento;
 	}
@@ -84,7 +119,7 @@ public abstract class Animal{
 		this.fazenda_id = fazenda_id;
 	}
 
-	public long getAdultAge() {
+	public double getAdultAge() {
 		return adultAge;
 	}
 
@@ -117,66 +152,40 @@ public abstract class Animal{
 		this.nome = nome;
 	}
 
-	public Animal(int numero, String nome, int diaNascimento, int mesNascimento, int anoNascimento, int genero,
-			int valorDeCompra, int valorDeVenda) {
-		super();
-		this.numero = numero;
-		this.nome = nome;
-		this.diaNascimento = diaNascimento;
-		this.mesNascimento = mesNascimento;
-		this.anoNascimento = anoNascimento;
-		this.genero = genero;
-		this.valorDeCompra = valorDeCompra;
-		this.valorDeVenda = valorDeVenda;
-	}
-
-	private int numero;
-	private String nome;
-	private int diaNascimento;
-	private int mesNascimento;
-	private int anoNascimento;
-	private int genero;
-	private int valorDeCompra;
-	private int valorDeVenda;
-	private long dataNascimento;
-	private long adultAge;
-	//private int genero;
-	private long dataVacinacao;
-	private int fazenda_id;
-	private boolean isVivo = true;
-	private boolean isVacinado = false;
-	private boolean isVendido = false;
-	private int diasDoano= 365;
 
 	// Contrutor: (numero, nome, diaNascimento, mesNascimento, anoNascimento, genero,
 	// 			   valorDeCompra, valorDeVenda)
 
 
-	public void vacina(){
-		Pair<Boolean, Date> is_adulto =  isAdulto(); //isAdulto();
-		if(is_adulto.first){
-			//dataVacinacao = is_adulto.second;
-			isVacinado = true;
-			System.out.println("wow, vacination is done!");
-		}else{
-			System.out.println("Invalid vacination date!");
+	public boolean vacina(){
+		//dataVacinacao = is_adulto.second;
+		isVacinado = true;
+		return true;
+
+	}
+
+	public boolean abate(){
+		if(podeSerComercializado()) {
+			morte();
+			return true;
 		}
+		return false;
 	}
 
-	public void abate(){
-		if(isVacinado) morte();
-	}
-
-	public void morte(){
-		isVivo = false;
+	public boolean morte(){
+		if(isVivo) {
+			isVivo = false;
+			return true;
+		}return false;
 	}
 
 	public boolean podeSerComercializado(){
-		return (isAdulto().first && isVacinado || !(isAdulto().first) );
+		return ((isAdulto().first && isVacinado || !(isAdulto().first)) && isVivo && isVendido == false);
+		// adulto e vacinado ou jovem
 	}
 
-	public void setAdultAge(float anos) {
-		this.adultAge = (long) (diasDoano * anos * 24 * 60 * 60 * 1000);
+	public void setAdultAge(int  meses) {
+		this.adultAge = meses;
 
 	}
 
@@ -186,30 +195,20 @@ public abstract class Animal{
 		return this.nome;
 	}
 
-	public Pair<Boolean, Date> isAdulto(){
-		//    	GregorianCalendar gc = new GregorianCalendar();
-		long diff = 0;
-		GregorianCalendar gc = new GregorianCalendar();
-		Date now = gc.getTime();
+	public Pair<Boolean, LocalDate> isAdulto(){
 
-		try {
-			SimpleDateFormat format = new SimpleDateFormat("MM/DD/yyyy");
-			System.out.println("today");
-			String today = (gc.get(gc.MONTH)+1) + "/" + gc.get(gc.DATE) +"/"+ gc.get(gc.YEAR);
-			System.out.println(today);
-			String bornday = mesNascimento + "/" + diaNascimento +"/"+ anoNascimento;
-			System.out.println(bornday);
-			diff = ((format.parse(today).getTime() - format.parse(bornday).getTime()));
-		}
-		
-		catch (Exception e) {
-			e.printStackTrace();	
-		}
-		return new Pair<Boolean, Date>(( diff > adultAge), now);
+		LocalDate today = LocalDate.now();    
+		LocalDate userday = LocalDate.of(getAnoNascimento(), getMesNascimento(), getDiaNascimento()); 
+		Period periodo = Period.between(userday, today);
+		int diff = (periodo.getYears()*12 + periodo.getMonths());  
+
+		return new Pair<Boolean, LocalDate>(( diff >= adultAge), today);
 	}
 
 	private boolean isAtivo(){
 		return isVivo || !isVendido;
 	}
+
+
 
 }

@@ -39,6 +39,7 @@ public class ValidaData {
 		GregorianCalendar day = new GregorianCalendar(ano, mes - 1, dia);
 		day.setLenient(false);
 		if (gc.before(day)) {
+			System.out.println("data ");
 			return false;
 		}
 

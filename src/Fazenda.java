@@ -30,12 +30,30 @@ public class Fazenda {
 		ValidaData data = new ValidaData(a.getDiaNascimento(), a.getMesNascimento(), a.getAnoNascimento());
 		if (data.VerificarData()){
 			if(animais.pesquisarAnimal(a.getNumero()) == null) {
-				animais.cadastrarAnimal(a);
+				a.setVivo(true);
+				a.setFazenda_id(numero);
+				a.setVendido(false);
+				Animal b = a;
+				animais.cadastrarAnimal(b);
 				return true;
 			}
 		}
 
 		return false;
 	}
+	public void Venda(Animal a) {
+
+			if(a.podeSerComercializado()) {
+				a.setVendido(true);
+				System.out.println("vendeu"+ a.getNome());
+				
+			}
+		}
+		
+	
+	public boolean abater(Animal a) {
+		return a.abate();
+	}
+
 
 }

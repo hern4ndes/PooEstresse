@@ -1,10 +1,6 @@
-import java.text.SimpleDateFormat;
+package prova1.hernandeserick;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-
-import javax.swing.text.StyledEditorKit.BoldAction;
 
 public abstract class Animal{
 
@@ -19,6 +15,7 @@ public abstract class Animal{
 		this.genero = genero;
 		this.valorDeCompra = valorDeCompra;
 		this.valorDeVenda = valorDeVenda;
+		
 	}
 
 	private int numero;
@@ -37,6 +34,41 @@ public abstract class Animal{
 	private boolean isVivo = true;
 	private boolean isVacinado = false;
 	private boolean isVendido = false;
+	private boolean falecido = false;
+	private boolean abatido = false;
+
+
+
+	///////////
+	private LocalDate dataDeAbate;
+	private LocalDate dataDeObto;
+	private LocalDate dataDeVacina;
+	private LocalDate dataDeVenda;
+
+
+	public LocalDate getDataDeVenda() {
+		return dataDeVenda;
+	}
+
+	public void setDataDeVenda(LocalDate dataDeVenda) {
+		this.dataDeVenda = dataDeVenda;
+	}
+
+	public boolean isFalecido() {
+		return falecido;
+	}
+
+	public void setFalecido(boolean falecido) {
+		this.falecido = falecido;
+	}
+
+	public boolean isAbatido() {
+		return abatido;
+	}
+
+	public void setAbatido(boolean abatido) {
+		this.abatido = abatido;
+	}
 
 	public int getNumero() {
 
@@ -46,16 +78,12 @@ public abstract class Animal{
 	public void setNumero(int numero) {
 		this.numero = numero;
 	}
-	
+
 	public int getDiaNascimento() {
 		return diaNascimento;
 	}
 
-	public void setDiaNascimento() {
-		this.diaNascimento = diaNascimento;
-	}
-
-	public int getMesNascimento() {
+		public int getMesNascimento() {
 		return mesNascimento;
 	}
 
@@ -97,7 +125,7 @@ public abstract class Animal{
 
 	public long getDataNascimento() {
 		return dataNascimento;
-	}
+	} 
 
 	public void setDataNascimento(long dataNascimento) {
 		this.dataNascimento = dataNascimento;
@@ -151,64 +179,101 @@ public abstract class Animal{
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+	public void setAdultAge(int  meses) {
+		this.adultAge = meses;
+
+	}
+
+	public String getNome(){
+		return this.nome;
+	}
+
 
 
 	// Contrutor: (numero, nome, diaNascimento, mesNascimento, anoNascimento, genero,
 	// 			   valorDeCompra, valorDeVenda)
 
 
-	public boolean vacina(){
+	public boolean vacina(){ 
 		//dataVacinacao = is_adulto.second;
-		isVacinado = true;
-		return true;
+		if(isVivo && !isVendido()){
+			dataDeVacina = LocalDate.now();
+			return	isVacinado = true;
+		
+		}
+		return false;	
 
 	}
 
-	public boolean abate(){
+	public boolean abate(){ // abatido
 		if(podeSerComercializado()) {
+			dataDeAbate = LocalDate.now();
 			morte();
+			abatido = true;
 			return true;
 		}
 		return false;
 	}
 
-	public boolean morte(){
+	public void morte(){
 		if(isVivo) {
 			isVivo = false;
+		}
+	}
+
+	public boolean morreu(){// morreu 
+		if(isVivo) {
+			dataDeObto = LocalDate.now();
+			morte();
+			
+			falecido = true;
 			return true;
-		}return false;
+		}
+		return false;
 	}
 
 	public boolean podeSerComercializado(){
-		return ((isAdulto().first && isVacinado || !(isAdulto().first)) && isVivo && isVendido == false);
+		return (((isAdulto() && isVacinado) && isVivo && isVendido == false) || (!isAdulto() && isVivo && isVendido == false));
 		// adulto e vacinado ou jovem
 	}
 
-	public void setAdultAge(int  meses) {
-		this.adultAge = meses;
 
-	}
-
-
-
-	public String getNome(){
-		return this.nome;
-	}
-
-	public Pair<Boolean, LocalDate> isAdulto(){
-
-		LocalDate today = LocalDate.now();    
-		LocalDate userday = LocalDate.of(getAnoNascimento(), getMesNascimento(), getDiaNascimento()); 
-		Period periodo = Period.between(userday, today);
+	public boolean isAdulto(){
+		LocalDate hoje = LocalDate.now();    
+		LocalDate nascimento = LocalDate.of(getAnoNascimento(), getMesNascimento(), getDiaNascimento()); 
+		Period periodo = Period.between(nascimento, hoje);
 		int diff = (periodo.getYears()*12 + periodo.getMonths());  
-
-		return new Pair<Boolean, LocalDate>(( diff >= adultAge), today);
+		return (diff >= adultAge);
 	}
 
-	private boolean isAtivo(){
-		return isVivo || !isVendido;
+	public boolean temAno(LocalDate data){
+		LocalDate hoje = LocalDate.now();    
+		Period periodo = Period.between(data, hoje);
+		return ((periodo.getYears()*12 + periodo.getMonths()) < 12);
 	}
 
+	public LocalDate getDataDeAbate() {
+		return dataDeAbate;
+	}
 
+	public void setDataDeAbate(LocalDate dataDeAbate) {
+		this.dataDeAbate = dataDeAbate;
+	}
+
+	public LocalDate getDataDeObto() {
+		return dataDeObto;
+	}
+
+	public void setDataDeObto(LocalDate dataDeObto) {
+		this.dataDeObto = dataDeObto;
+	}
+
+	public LocalDate getDataDeVacina() {
+		return dataDeVacina;
+	}
+
+	public void setDataDeVacina(LocalDate dataDeVacina) {
+		this.dataDeVacina = dataDeVacina;
+	}
 
 }

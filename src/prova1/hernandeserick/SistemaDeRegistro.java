@@ -1,31 +1,32 @@
+package prova1.hernandeserick;
 
 public class SistemaDeRegistro implements Rastreavel {
 	private RepositorioDeFazendas fazendas = new ArrayListDeFazendas();	
 
 	@Override
 	public boolean cadastrarFazenda(Fazenda f) {
-		if(f.getNumero() > 0 && !f.getNome().isEmpty() ) {
+		ValidarFazenda fazendavalida = new ValidarFazenda(f);
+		if(fazendavalida.fazendaIsValida()) {
 			if( fazendas.pesquisar(f.getNumero())== null) {
 				fazendas.cadastrar(f);
 				return true;
-
 			}			
 			return false;
-		}
+		} 
 		return false;
 	}
 
 	@Override
 	public boolean cadastrarAnimal(Animal a, Fazenda f) {
-		if(a.getNumero() > 0 && !a.getNome().isEmpty() ) {
+		ValidarAnimal animalValidado = new ValidarAnimal(a);
+		ValidarFazenda fazendavalida = new ValidarFazenda(f);
+		if(animalValidado.isValido  && fazendavalida.fazendaIsValida()) {
 			Fazenda fazenda = fazendas.pesquisar(f.getNumero());
 			if(fazenda != null) {
 				a.setFazenda_id(fazenda.getNumero());
 				a.setVivo(true);
 				return fazenda.cadastrarAnimal(a);
-
 			}			
-			return false;
 		}
 		return false;
 	}
@@ -44,8 +45,9 @@ public class SistemaDeRegistro implements Rastreavel {
 				Animal a = animaisF1.pesquisarAnimal(comprado);
 				//System.out.println(animal.getNome());
 
-				if(a != null) {
+				if(a != null && a.podeSerComercializado()) {
 					venda.Venda(a);
+
 					if (a instanceof Bovino) {
 						Animal a1 = new Bovino(a.getNumero(), a.getNome(),a.getDiaNascimento(), a.getMesNascimento(), a.getAnoNascimento(), a.getGenero(), a.getValorDeCompra(), a.getValorDeVenda());
 						return compra.cadastrarAnimal(a1);
@@ -58,10 +60,7 @@ public class SistemaDeRegistro implements Rastreavel {
 						Animal a1  = new Suino(a.getNumero(), a.getNome(),a.getDiaNascimento(), a.getMesNascimento(), a.getAnoNascimento(), a.getGenero(), a.getValorDeCompra(), a.getValorDeVenda());
 						return compra.cadastrarAnimal(a1);
 					}
-
-
-
-					return true;
+					
 				}
 
 				return false;
@@ -76,7 +75,6 @@ public class SistemaDeRegistro implements Rastreavel {
 	public boolean venda(int vendido, int fazendaVenda, int fazendaCompra) {
 
 		return compra(vendido, fazendaCompra, fazendaVenda);
-
 
 	}
 
@@ -93,20 +91,26 @@ public class SistemaDeRegistro implements Rastreavel {
 
 	@Override
 	public boolean morte(int numeroAnimal, int identificadorFazenda) {
-
-
-		return false;
-	}
-
-	@Override
-	public boolean vacina(int numeroAnimal, int identificadorFazenda) {
 		Fazenda fazenda = fazendas.pesquisar(identificadorFazenda);
 		RepositorioDeAnimais animais = new ArrayListDeAnimais();
 		animais = fazenda.getAnimais();
 		Animal animal = animais.pesquisarAnimal(numeroAnimal);
-		if (animal != null) {
-			return animal.vacina();
+		if (animal != null) return fazenda.matar(animal);
 
+		return false;
+	}
+
+
+	@Override
+	public boolean vacina(int numeroAnimal, int identificadorFazenda) {
+		Fazenda fazenda = fazendas.pesquisar(identificadorFazenda);
+		if((fazenda != null) ) {
+			RepositorioDeAnimais animais = new ArrayListDeAnimais();
+			animais = fazenda.getAnimais();
+			Animal animal = animais.pesquisarAnimal(numeroAnimal); 
+			if ((animal != null) && (fazenda != null) ) {
+				return animal.vacina();
+			}
 		}
 		return false;
 	}
@@ -127,23 +131,23 @@ public class SistemaDeRegistro implements Rastreavel {
 			for (Animal animal: animais.getAnimais()) {
 				if(tipo == 0) {
 					//todos
-					if((!jovem) && (animal.isAdulto().first) && (animal.getGenero() != intGenero) && animal.isVivo() && animal.isVendido() == false) count ++;
+					if((!jovem) && (animal.isAdulto()) && (animal.getGenero() != intGenero) && animal.isVivo() && animal.isVendido() == false) count ++;
 					// adulto && genero = genero
-					else if((jovem) && (!animal.isAdulto().first) && (animal.getGenero() != intGenero) && animal.isVivo()&& animal.isVendido() == false ) count ++;
+					else if((jovem) && (!animal.isAdulto()) && (animal.getGenero() != intGenero) && animal.isVivo()&& animal.isVendido() == false ) count ++;
 					//jovem
 				}
 				else if(tipo == 1) {
-					if((!jovem) && (animal.isAdulto().first) && (animal.getGenero() != intGenero) &&(animal instanceof Bovino) && animal.isVivo() && animal.isVendido() == false) count ++;//bovino adulto 
-					else if((jovem) && (!animal.isAdulto().first) && (animal.getGenero() != intGenero) &&(animal instanceof Bovino)&& animal.isVivo() && animal.isVendido() == false) count ++; // bovino jovem
+					if((!jovem) && (animal.isAdulto()) && (animal.getGenero() != intGenero) &&(animal instanceof Bovino) && animal.isVivo() && animal.isVendido() == false) count ++;//bovino adulto 
+					else if((jovem) && (!animal.isAdulto()) && (animal.getGenero() != intGenero) &&(animal instanceof Bovino)&& animal.isVivo() && animal.isVendido() == false) count ++; // bovino jovem
 
 				}else if(tipo == 2) {
-					if((!jovem) && (animal.isAdulto().first) && (animal.getGenero() != intGenero) &&(animal instanceof Suino)&& animal.isVivo() && animal.isVendido() == false) count ++;//bovino adulto 
-					else if((jovem) && (!animal.isAdulto().first) && (animal.getGenero() != intGenero) &&(animal instanceof Suino) && animal.isVivo()&& animal.isVendido() == false) count ++; // bovino jovem
+					if((!jovem) && (animal.isAdulto()) && (animal.getGenero() != intGenero) &&(animal instanceof Suino)&& animal.isVivo() && animal.isVendido() == false) count ++;//bovino adulto 
+					else if((jovem) && (!animal.isAdulto()) && (animal.getGenero() != intGenero) &&(animal instanceof Suino) && animal.isVivo()&& animal.isVendido() == false) count ++; // bovino jovem
 
 				}
 				else if(tipo == 3) {
-					if((!jovem) && (animal.isAdulto().first) && (animal.getGenero() != intGenero) &&(animal instanceof Caprino)&& animal.isVivo() && animal.isVendido() == false) count ++;//bovino adulto 
-					else if((jovem) && (!animal.isAdulto().first) && (animal.getGenero() != intGenero) &&(animal instanceof Caprino) && animal.isVivo()&& animal.isVendido() == false) count ++; // bovino jovem
+					if((!jovem) && (animal.isAdulto()) && (animal.getGenero() != intGenero) &&(animal instanceof Caprino)&& animal.isVivo() && animal.isVendido() == false) count ++;//bovino adulto 
+					else if((jovem) && (!animal.isAdulto()) && (animal.getGenero() != intGenero) &&(animal instanceof Caprino) && animal.isVivo()&& animal.isVendido() == false) count ++; // bovino jovem
 
 				}
 
@@ -162,20 +166,18 @@ public class SistemaDeRegistro implements Rastreavel {
 			for (Animal animal: animais.getAnimais()) {
 				if(tipo == 0) {
 					//todos
-					if(animal.isVendido() == true) count = count + animal.getValorDeVenda();
+					if(animal.isVendido() == true && animal.temAno(animal.getDataDeVenda())) count = count + animal.getValorDeVenda();
 
 				}
 				else if(tipo == 1) {
-					if((animal instanceof Bovino) && animal.isVendido() == true) count = count + animal.getValorDeVenda();//bovino adulto 
-
+					if((animal instanceof Bovino)&& animal.isVivo() && animal.isVendido() == true && animal.temAno(animal.getDataDeVenda())) count = count + animal.getValorDeVenda();//bovino adulto 
 
 				}else if(tipo == 2) {
-					if((animal instanceof Suino)&& animal.isVivo() && animal.isVendido() == true)count = count + animal.getValorDeVenda();//bovino adulto 
-
+					if((animal instanceof Suino)&& animal.isVivo() && animal.isVendido() == true && animal.temAno(animal.getDataDeVenda()))count = count + animal.getValorDeVenda();//bovino adulto 
 
 				}
 				else if(tipo == 3) {
-					if((animal instanceof Caprino)&& animal.isVivo() && animal.isVendido() == true) count += animal.getValorDeVenda();//bovino adulto 
+					if((animal instanceof Caprino)&& animal.isVivo() && animal.isVendido() == true && animal.temAno(animal.getDataDeVenda())) count += animal.getValorDeVenda();//bovino adulto 
 				}
 
 			}
@@ -187,8 +189,34 @@ public class SistemaDeRegistro implements Rastreavel {
 
 	@Override
 	public double perdaAnual(int fazenda, int tipo) {
-		
-		return 0;
+		Fazenda f1 = fazendas.pesquisar(fazenda);
+		double count = 0;
+		if(f1 != null) {
+			RepositorioDeAnimais animais = f1.getAnimais();
+			for (Animal animal: animais.getAnimais()) {
+				if(tipo == 0) {
+					//todos
+					if(animal.isFalecido() == true && animal.temAno(animal.getDataDeObto())) count = count + animal.getValorDeVenda();
+
+				}
+				else if(tipo == 1) {
+					if((animal instanceof Bovino) && animal.isFalecido() == true && animal.temAno(animal.getDataDeObto())) count = count + animal.getValorDeVenda();//bovino adulto 
+
+				}else if(tipo == 2) {
+					if((animal instanceof Suino)&& animal.isFalecido() == true && animal.temAno(animal.getDataDeObto()) )count = count + animal.getValorDeVenda();//bovino adulto 
+
+				}
+				else if(tipo == 3) {
+					if((animal instanceof Caprino)&& animal.isFalecido() == true && animal.temAno(animal.getDataDeObto()) )count = count + animal.getValorDeVenda();//bovino adulto
+				}
+
+			}
+
+		}
+
+		return count;
 	}
 
 }
+
+

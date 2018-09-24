@@ -1,3 +1,4 @@
+package prova1.hernandeserick;
 import java.util.ArrayList;
 
 public class ArrayListDeFazendas implements RepositorioDeFazendas{

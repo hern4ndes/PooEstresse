@@ -1,3 +1,6 @@
+package prova1.hernandeserick;
+
+import java.time.LocalDate;
 
 public class Fazenda {
 	private RepositorioDeAnimais animais = new ArrayListDeAnimais(); 
@@ -10,22 +13,29 @@ public class Fazenda {
 	}
 	public int getNumero() {
 		return numero;
+	
 	}
+	
 	public void setNumero(int numero) {
 		this.numero = numero;
 	}
+	
 	public String getNome() {
 		return nome;
 	}
+	
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+	
 	public RepositorioDeAnimais getAnimais() {
 		return animais;
 	}
+	
 	public void setAnimais(RepositorioDeAnimais animais) {
 		this.animais = animais;
 	}
+	
 	public boolean cadastrarAnimal(Animal a) {
 		ValidaData data = new ValidaData(a.getDiaNascimento(), a.getMesNascimento(), a.getAnoNascimento());
 		if (data.VerificarData()){
@@ -34,18 +44,20 @@ public class Fazenda {
 				a.setFazenda_id(numero);
 				a.setVendido(false);
 				Animal b = a;
-				animais.cadastrarAnimal(b);
+				animais.cadastrarAnimal(b); 
 				return true;
 			}
+			return false;
 		}
 
-		return false;
+		return false; 
 	}
+	
 	public void Venda(Animal a) {
-
 			if(a.podeSerComercializado()) {
 				a.setVendido(true);
-				System.out.println("vendeu"+ a.getNome());
+				a.setDataDeVenda(LocalDate.now()); 
+				
 				
 			}
 		}
@@ -54,6 +66,11 @@ public class Fazenda {
 	public boolean abater(Animal a) {
 		return a.abate();
 	}
+	
+	public boolean matar(Animal a) {
+		return a.morreu();
+	}
+	
 
 
 }

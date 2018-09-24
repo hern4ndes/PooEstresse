@@ -1,3 +1,4 @@
+package prova1.hernandeserick;
 
 public interface RepositorioDeFazendas {
 	public abstract void cadastrar(Fazenda f);

@@ -1,3 +1,4 @@
+package prova1.hernandeserick;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
@@ -13,8 +14,8 @@ public class ValidaData {
 	}
 
 	public int getMes() {
-		return mes;
-	}
+		return mes; 
+	} 
 
 	public int getAno() {
 		return ano;
@@ -39,7 +40,6 @@ public class ValidaData {
 		GregorianCalendar day = new GregorianCalendar(ano, mes - 1, dia);
 		day.setLenient(false);
 		if (gc.before(day)) {
-			System.out.println("data ");
 			return false;
 		}
 

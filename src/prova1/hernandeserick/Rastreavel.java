@@ -1,3 +1,4 @@
+package prova1.hernandeserick;
 public interface Rastreavel {
   // Grupo 1
   public boolean cadastrarFazenda(Fazenda f);

@@ -1,3 +1,4 @@
+package prova1.hernandeserick;
 public class Pair<X, Y> {
   public final X first;
   public final Y second;
@@ -6,4 +7,4 @@ public class Pair<X, Y> {
       this.second = y;
     }
 }
-
+ 

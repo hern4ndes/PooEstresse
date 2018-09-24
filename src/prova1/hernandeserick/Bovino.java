@@ -1,4 +1,5 @@
-import java.util.Date;
+package prova1.hernandeserick;
+
 
 // import java.lang.Exception;
 
@@ -8,6 +9,6 @@ public class Bovino extends Animal{
 		super( numero, nome, diaNascimento,  mesNascimento, anoNascimento, genero, valorDeCompra,valorDeVenda);
 		this.setAdultAge(23);
 	}
-
+ 
 	
 }

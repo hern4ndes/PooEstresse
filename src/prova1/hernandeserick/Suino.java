@@ -1,3 +1,4 @@
+package prova1.hernandeserick;
 
 public class Suino extends Animal {
 	
